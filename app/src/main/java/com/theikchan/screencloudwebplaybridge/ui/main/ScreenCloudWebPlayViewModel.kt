@@ -9,8 +9,10 @@ import com.theikchan.screencloudwebplaybridge.domain.model.DeviceDetailInfo
 import com.theikchan.screencloudwebplaybridge.domain.usecase.GetDeviceInfoUseCase
 import com.theikchan.screencloudwebplaybridge.webjsbridge.JSBridgeConstant
 import com.theikchan.screencloudwebplaybridge.webjsbridge.WebJSBridge
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 data class ScreenCloudViewState(
@@ -18,7 +20,9 @@ data class ScreenCloudViewState(
     val webJsBridge: WebJSBridge? = null
 )
 
-class ScreenCloudWebPlayViewModel(private val getDeviceInfoUseCase: GetDeviceInfoUseCase) : ViewModel() {
+@HiltViewModel
+class ScreenCloudWebPlayViewModel @Inject constructor(private val getDeviceInfoUseCase: GetDeviceInfoUseCase) :
+    ViewModel() {
 
     private val _viewState = MutableLiveData(ScreenCloudViewState())
     val viewState: LiveData<ScreenCloudViewState> = _viewState
@@ -28,6 +32,15 @@ class ScreenCloudWebPlayViewModel(private val getDeviceInfoUseCase: GetDeviceInf
 
     private val _isWebViewLoaded = MutableLiveData<Boolean>()
     val isWebViewLoaded: LiveData<Boolean> = _isWebViewLoaded
+
+    private val _webViewLoadedUrl = MutableLiveData<String>()
+    val webViewLoadedUrl: LiveData<String> = _webViewLoadedUrl
+
+    private val _isScreenshotSuccess = MutableLiveData<Boolean>()
+    val isScreenshotSuccess: LiveData<Boolean> = _isScreenshotSuccess
+
+    private val _screenshotBase64 = MutableLiveData<String?>()
+    val screenshotBase64: LiveData<String?> = _screenshotBase64
 
     val webViewUrl = "file:///android_asset/index.html"
 
@@ -44,7 +57,10 @@ class ScreenCloudWebPlayViewModel(private val getDeviceInfoUseCase: GetDeviceInf
     fun onWebViewCreated(createdWebView: WebView) {
         viewModelScope.launch(Dispatchers.Main) {
             val webJsBridge =
-                WebJSBridge(createdWebView, deviceDetailInfo.value?.toJsonString() ?: "")
+                WebJSBridge(
+                    createdWebView, deviceDetailInfo.value?.toJsonString() ?: "",
+                    onScreenShotResult = ::handleScreenshotResult
+                )
 
             _viewState.value = _viewState.value?.copy(
                 webView = createdWebView,
@@ -53,8 +69,18 @@ class ScreenCloudWebPlayViewModel(private val getDeviceInfoUseCase: GetDeviceInf
         }
     }
 
+    private fun handleScreenshotResult(isSuccess: Boolean, base64Screenshot: String?) {
+        viewModelScope.launch {
+            _isScreenshotSuccess.value = isSuccess
+            _screenshotBase64.value = base64Screenshot
+        }
+    }
+
     fun onWebViewLoaded(isLoaded: Boolean, url: String) {
-        _isWebViewLoaded.value = isLoaded
+        viewModelScope.launch {
+            _isWebViewLoaded.value = isLoaded
+            _webViewLoadedUrl.value = url
+        }
     }
 
     fun takeScreenshot() {

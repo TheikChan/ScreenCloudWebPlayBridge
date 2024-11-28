@@ -5,7 +5,7 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 
 object JsonParser {
-    fun mergeJson(androidInfo: String, nativeDeviceInfo: String) : String {
+    fun mergeJson(androidInfo: String, nativeDeviceInfo: String): String {
         val androidJson = Json.parseToJsonElement(androidInfo).jsonObject
         val nativeJson = Json.parseToJsonElement(nativeDeviceInfo).jsonObject
 

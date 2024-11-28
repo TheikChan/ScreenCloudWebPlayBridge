@@ -20,9 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.theikchan.screencloudwebplaybridge.R
 
 @Composable
 fun DeviceInfoDialog(
@@ -48,7 +50,7 @@ fun DeviceInfoDialog(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                "Device Information",
+                stringResource(R.string.device_information_title_label),
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -66,7 +68,7 @@ fun DeviceInfoDialog(
                 .padding(8.dp)
                 .testTag("deviceInfoDialogCloseButton")
         ) {
-            Text("CLOSE")
+            Text(stringResource(R.string.close_button_label))
         }
     }
 }

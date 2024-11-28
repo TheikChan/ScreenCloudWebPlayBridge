@@ -17,8 +17,8 @@ data class DeviceDetailInfo(
     @SerialName("device_manufacturer") val deviceManufacturer: String,
     @SerialName("device_model") val deviceModel: String,
     @SerialName("native_info") val nativeInfo: NativeInfo
-){
-    fun toJsonString() : String {
+) {
+    fun toJsonString(): String {
         return Json.encodeToString(this)
     }
 }

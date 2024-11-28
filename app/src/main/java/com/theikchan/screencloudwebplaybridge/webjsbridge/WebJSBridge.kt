@@ -6,7 +6,9 @@ import com.theikchan.screencloudwebplaybridge.utils.Screenshot
 
 class WebJSBridge(
     private val webView: WebView,
-    private val deviceInfo: String) :
+    private val deviceInfo: String,
+    private val onScreenShotResult: (isSuccess: Boolean, data: String?) -> Unit
+) :
     SC_INTERFACE {
 
     init {
@@ -23,8 +25,11 @@ class WebJSBridge(
     @JavascriptInterface
     override fun take_screenshot(callback: String) {
         Screenshot.capture(webView) { base64EncodedString ->
-            base64EncodedString?.let {
+            if (base64EncodedString != null) {
                 sendDataToWebView(callback, base64EncodedString)
+                onScreenShotResult(true, base64EncodedString)
+            } else {
+                onScreenShotResult(false, null)
             }
         }
     }

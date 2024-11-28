@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">ScreenCloudWebPlayBridge</string>
+    <string name="device_info_label">Device Info</string>
+    <string name="screenshot_button_label">Screenshot</string>
+
+    <!-- Device Information -->
+    <string name="device_information_title_label">Device Information</string>
+    <string name="close_button_label">CLOSE</string>
 </resources>

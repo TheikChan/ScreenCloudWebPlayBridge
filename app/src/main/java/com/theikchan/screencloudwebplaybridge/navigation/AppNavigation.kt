@@ -2,21 +2,14 @@ package com.theikchan.screencloudwebplaybridge.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.theikchan.screencloudwebplaybridge.NativeStore
-import com.theikchan.screencloudwebplaybridge.data.repo.DeviceInfoRepositoryImpl
-import com.theikchan.screencloudwebplaybridge.domain.usecase.GetDeviceInfoUseCase
 import com.theikchan.screencloudwebplaybridge.ui.deviceinfodialog.DeviceInfoDialog
 import com.theikchan.screencloudwebplaybridge.ui.deviceinfodialog.DeviceInfoDialogViewModel
 import com.theikchan.screencloudwebplaybridge.ui.main.ScreenCloudWebPlay
-import com.theikchan.screencloudwebplaybridge.ui.main.ScreenCloudWebPlayViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -49,19 +42,11 @@ fun AppNavigation() {
         startDestination = Home
     ) {
         composable<Home> {
-            val nativeStore = remember { NativeStore() }
-            val repository = remember { DeviceInfoRepositoryImpl(nativeStore) }
-            val useCase = remember { GetDeviceInfoUseCase(repository) }
-            val viewModel = remember { ScreenCloudWebPlayViewModel(useCase) }
-//            val viewModel: ScreenCloudWebPlayViewModel = viewModel(
-//                factory = ScreenCloudWebPlayViewModelFactory(useCase)
-//            )
-
             ScreenCloudWebPlay(
-                viewModel = viewModel,
                 onDeviceInfoPressed = { deviceDetailParam ->
                     navController.navigate(deviceDetailParam)
-                }
+                },
+                onScreenshotPressed = {}
             )
         }
 
@@ -78,15 +63,3 @@ fun AppNavigation() {
         }
     }
 }
-
-//class ScreenCloudWebPlayViewModelFactory(
-//    private val useCase: GetDeviceInfoUseCase,
-//) : ViewModelProvider.Factory {
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(ScreenCloudWebPlayViewModel::class.java)) {
-//            @Suppress("UNCHECKED_CAST")
-//            return ScreenCloudWebPlayViewModel(useCase) as T
-//        }
-//        throw IllegalArgumentException("Unknown ViewModel class")
-//    }
-//}

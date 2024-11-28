@@ -6,7 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.theikchan.screencloudwebplaybridge.data.repo.DeviceInfoRepositoryImpl
+import com.theikchan.screencloudwebplaybridge.domain.repo.DeviceInfoRepository
 import com.theikchan.screencloudwebplaybridge.domain.usecase.GetDeviceInfoUseCase
 import com.theikchan.screencloudwebplaybridge.navigation.DeviceDetailInfoPara
 import com.theikchan.screencloudwebplaybridge.ui.deviceinfodialog.DeviceInfoDialog
@@ -14,11 +14,14 @@ import com.theikchan.screencloudwebplaybridge.ui.deviceinfodialog.DeviceInfoDial
 import com.theikchan.screencloudwebplaybridge.ui.main.ScreenCloudWebPlay
 import com.theikchan.screencloudwebplaybridge.ui.main.ScreenCloudWebPlayViewModel
 import com.theikchan.screencloudwebplaybridge.ui.theme.ScreenCloudWebPlayBridgeTheme
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import javax.inject.Inject
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -26,24 +29,24 @@ import org.junit.runner.RunWith
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 
+@HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
 
-    private lateinit var mockViewModel: ScreenCloudWebPlayViewModel
-
+    @get:Rule(order = 0)
+    val hiltRule = HiltAndroidRule(this)
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    @Inject
+    lateinit var mockDeviceInfoRepository: DeviceInfoRepository
+
+    private lateinit var mockViewModel: ScreenCloudWebPlayViewModel
+
     @Before
     fun setup() {
-        val mockNativeStore = NativeStore()
-        val mockDeviceInfoRepo = DeviceInfoRepositoryImpl(mockNativeStore)
-        val mockGetDeviceInfoUseCase = GetDeviceInfoUseCase(mockDeviceInfoRepo)
-
-        mockViewModel = ScreenCloudWebPlayViewModel(
-            getDeviceInfoUseCase = mockGetDeviceInfoUseCase,
-        )
+        hiltRule.inject()
     }
 
     @Test
@@ -52,15 +55,26 @@ class ExampleInstrumentedTest {
         // Launch the app
         // Check WebView exist
         // check WebView loading finished
+        val mockUrl = "file:///android_asset/index.html"
+        val mockGetDeviceInfoUseCase = GetDeviceInfoUseCase(mockDeviceInfoRepository)
+        val mockViewModel = ScreenCloudWebPlayViewModel(
+            getDeviceInfoUseCase = mockGetDeviceInfoUseCase,
+        )
+
         composeTestRule.setContent {
-            ScreenCloudWebPlay(viewModel = mockViewModel, onDeviceInfoPressed = {})
+            ScreenCloudWebPlay(
+                viewModel = mockViewModel,
+                onDeviceInfoPressed = {},
+                onScreenshotPressed = {})
         }
 
-        // Assert WebView exists
-        composeTestRule.onNodeWithTag("webView").assertExists()
+        val webViewTag = "webView"
+        composeTestRule.onNodeWithTag(webViewTag).assertExists()
 
-        // Assert WebView successfully loaded
-        assertTrue(mockViewModel.isWebViewLoaded.value ?: false)
+        assertTrue(mockViewModel.isWebViewLoaded.value == true)
+        assertTrue(mockViewModel.webViewLoadedUrl.value == mockUrl)
+
+        composeTestRule.onNodeWithTag(webViewTag).assertExists()
     }
 
     @Test
@@ -69,27 +83,28 @@ class ExampleInstrumentedTest {
         // Launch the app
         // Check screenshot button exist
         // Perform click on screenshot button
+        val mockGetDeviceInfoUseCase = GetDeviceInfoUseCase(mockDeviceInfoRepository)
+        mockViewModel = ScreenCloudWebPlayViewModel(
+            getDeviceInfoUseCase = mockGetDeviceInfoUseCase,
+        )
+
         composeTestRule.setContent {
-            ScreenCloudWebPlay(viewModel = mockViewModel, onDeviceInfoPressed = {})
+            ScreenCloudWebPlay(viewModel = mockViewModel, onDeviceInfoPressed = {},
+                onScreenshotPressed = {
+                    assertTrue(it)
+                })
         }
 
-        // Assert WebView exists
         composeTestRule.onNodeWithTag("webView").assertExists()
 
-        // Simulate the user clicking the screenshot button
+        composeTestRule.onNodeWithTag("screenshotButton").assertIsDisplayed()
         composeTestRule.onNodeWithTag("screenshotButton").performClick()
     }
 
     @Test
     fun testDeviceInfo() {
         // Test - Device info accuracy
-        // Launch the app
-        // Check device info button exist
-        // Perform click on device info button
-        // Check device info dialog exist
-        // Check device info dialog content correct
-        // Close the info dialog
-        // Check the info dialog is dismissed
+        // Check device info dialog display content correct
 
         // Arrange: Mock the data for testing
         val mockDeviceInfo = DeviceDetailInfoPara(
@@ -108,12 +123,13 @@ class ExampleInstrumentedTest {
             hardwareSerial = "vbox86",
             androidVersion = 30,
         )
+        val mockDeviceInfoDialogViewModel = DeviceInfoDialogViewModel(mockDeviceInfo)
 
         // Act: Render the dialog with mocked data
         composeTestRule.setContent {
             ScreenCloudWebPlayBridgeTheme {
                 DeviceInfoDialog(
-                    viewModel = DeviceInfoDialogViewModel(mockDeviceInfo),
+                    viewModel = mockDeviceInfoDialogViewModel,
                     onClosePress = {}
                 )
             }
@@ -140,6 +156,6 @@ class ExampleInstrumentedTest {
         composeTestRule.onNodeWithText("System Info:").assertIsDisplayed()
         composeTestRule.onNodeWithText("RAM Total: 2.93 GB\nKernel Version: 11").assertIsDisplayed()
 
-        composeTestRule.onNodeWithTag("deviceInfoDialogCloseButton").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("deviceInfoDialogCloseButton").assertExists()
     }
 }

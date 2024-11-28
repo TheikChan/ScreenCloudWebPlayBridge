@@ -16,7 +16,7 @@ fun WebView(
     url: String,
     modifier: Modifier = Modifier,
     onWebViewCreated: (WebView) -> Unit,
-    onWebViewLoaded: (isLoaded: Boolean,url: String) -> Unit
+    onWebViewLoaded: (isLoaded: Boolean, url: String) -> Unit
 ) {
     AndroidView(
         modifier = modifier,
@@ -46,6 +46,7 @@ fun WebView(
             }
         }, update = {
             it.loadUrl(url)
+            onWebViewCreated(it)
         })
 }
 

@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.theikchan.screencloudwebplaybridge.navigation.AppNavigation
 import com.theikchan.screencloudwebplaybridge.ui.theme.ScreenCloudWebPlayBridgeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

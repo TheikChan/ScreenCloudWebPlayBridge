@@ -100,7 +100,7 @@ object Screenshot {
         val byteArray = byteArrayStream.toByteArray()
         val base64String = Base64.encodeToString(byteArray, Base64.DEFAULT)
         val base64UrlEncodedString = URLEncoder.encode(base64String, "UTF-8")
-        Log.d("[Screenshot][Base64]", base64UrlEncodedString)
+        Log.d("[Screenshot][Base64EncodedString]", base64UrlEncodedString)
         return base64UrlEncodedString
     }
 }

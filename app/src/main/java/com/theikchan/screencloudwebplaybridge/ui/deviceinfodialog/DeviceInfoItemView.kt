@@ -27,8 +27,8 @@ fun DeviceInfoItemView(title: String, value: String) {
 fun PreviewDeviceDetailRow() {
     MaterialTheme {
         DeviceInfoItemView(
-            title = "Device Name",
-            value = "My Device"
+            title = "Device Title",
+            value = "Device Value"
         )
     }
 }
