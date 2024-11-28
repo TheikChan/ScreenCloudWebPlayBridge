@@ -34,7 +34,7 @@ fun DeviceInfoDialog(
 
     Box(
         modifier = Modifier
-                .fillMaxSize()
+            .fillMaxSize()
             .wrapContentSize(Alignment.Center)
             .background(Color.Black.copy(alpha = 0.5f))
             .testTag("deviceInfoDialog"),
@@ -47,7 +47,6 @@ fun DeviceInfoDialog(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.Start
         ) {
-
             Text(
                 "Device Information",
                 style = MaterialTheme.typography.titleLarge
@@ -56,30 +55,19 @@ fun DeviceInfoDialog(
             Spacer(modifier = Modifier.height(16.dp))
 
             deviceDetails.forEach { (key, value) ->
-                DeviceDetailRow(title = key, value = value)
+                DeviceInfoItemView(title = key, value = value)
             }
         }
 
         TextButton(
             onClick = onClosePress,
-            modifier = Modifier.align(alignment = Alignment.BottomEnd)
+            modifier = Modifier
+                .align(alignment = Alignment.BottomEnd)
                 .padding(8.dp)
                 .testTag("deviceInfoDialogCloseButton")
         ) {
             Text("CLOSE")
         }
-    }
-}
-
-@Composable
-fun DeviceDetailRow(title: String, value: String) {
-    Column {
-        Text(
-            title,
-            style = MaterialTheme.typography.titleMedium
-        )
-        Text(value)
-        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
