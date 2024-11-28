@@ -42,8 +42,6 @@ class ExampleInstrumentedTest {
     @Inject
     lateinit var mockDeviceInfoRepository: DeviceInfoRepository
 
-    private lateinit var mockViewModel: ScreenCloudWebPlayViewModel
-
     @Before
     fun setup() {
         hiltRule.inject()
@@ -84,7 +82,7 @@ class ExampleInstrumentedTest {
         // Check screenshot button exist
         // Perform click on screenshot button
         val mockGetDeviceInfoUseCase = GetDeviceInfoUseCase(mockDeviceInfoRepository)
-        mockViewModel = ScreenCloudWebPlayViewModel(
+        val mockViewModel = ScreenCloudWebPlayViewModel(
             getDeviceInfoUseCase = mockGetDeviceInfoUseCase,
         )
 
