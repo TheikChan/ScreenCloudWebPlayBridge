@@ -19,7 +19,11 @@ import java.net.URLEncoder
 object Screenshot {
 
     fun capture(webView: WebView, onResult: (String?) -> Unit) {
-        captureCanvas(webView, onResult)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            capturePixelCopy(webView, onResult)
+        }else {
+            captureCanvas(webView, onResult)
+        }
     }
 
     private fun captureCanvas(screenView: WebView, onResult: (String?) -> Unit) {

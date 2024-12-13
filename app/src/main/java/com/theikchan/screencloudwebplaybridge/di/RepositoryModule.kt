@@ -1,6 +1,8 @@
 package com.theikchan.screencloudwebplaybridge.di
 
+import com.theikchan.screencloudwebplaybridge.data.repo.AndroidDeviceInfoRepoImpl
 import com.theikchan.screencloudwebplaybridge.data.repo.DeviceInfoRepositoryImpl
+import com.theikchan.screencloudwebplaybridge.domain.repo.AndroidDeviceInfoRepo
 import com.theikchan.screencloudwebplaybridge.domain.repo.DeviceInfoRepository
 import dagger.Binds
 import dagger.Module
@@ -15,4 +17,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindDeviceInfoRepository(userRepository: DeviceInfoRepositoryImpl): DeviceInfoRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAndroidDeviceInfoRepository(androidInfoRepository: AndroidDeviceInfoRepoImpl): AndroidDeviceInfoRepo
 }

@@ -8,19 +8,30 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class DeviceInfoRepositoryImpl @Inject constructor(
-    private val nativeStore: NativeStore
+    private val nativeStore: NativeStore,
+    private val androidDeviceInfoRepoImpl: AndroidDeviceInfoRepoImpl
 ) : DeviceInfoRepository {
 
     override suspend fun getAndroidDeviceInfo(): String {
+
+        val appVersion = androidDeviceInfoRepoImpl.getAppVersion()
+        val packageName = androidDeviceInfoRepoImpl.getPackageName()
+        val screenWidth = androidDeviceInfoRepoImpl.getScreenWidth()
+        val screenHeight = androidDeviceInfoRepoImpl.getScreenHeight()
+        val screenDensity = androidDeviceInfoRepoImpl.getScreenDensity()
+        val androidVersion = androidDeviceInfoRepoImpl.getAndroidVersion()
+        val deviceManufacturer = androidDeviceInfoRepoImpl.getManufacturer()
+        val deviceModel = androidDeviceInfoRepoImpl.getModel()
+
         return """{
-            "app_version": "1.0",
-            "package_name": "io.screencloud.assignment.android_senior_dev",
-            "screen_width": 2560,
-            "screen_height": 1688,
-            "screen_density": 2,
-            "android_version": 30,
-            "device_manufacturer": "Genymobile",
-            "device_model": "Pixel C"
+            "app_version": "$appVersion",
+            "package_name": "$packageName",
+            "screen_width": $screenWidth,
+            "screen_height": $screenHeight,
+            "screen_density": $screenDensity,
+            "android_version": $androidVersion,
+            "device_manufacturer": "$deviceManufacturer",
+            "device_model": "$deviceModel"
         }"""
     }
 

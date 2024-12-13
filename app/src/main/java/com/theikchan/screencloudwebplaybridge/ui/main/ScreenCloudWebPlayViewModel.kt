@@ -55,18 +55,16 @@ class ScreenCloudWebPlayViewModel @Inject constructor(private val getDeviceInfoU
     }
 
     fun onWebViewCreated(createdWebView: WebView) {
-        viewModelScope.launch(Dispatchers.Main) {
-            val webJsBridge =
-                WebJSBridge(
-                    createdWebView, deviceDetailInfo.value?.toJsonString() ?: "",
-                    onScreenShotResult = ::handleScreenshotResult
-                )
-
-            _viewState.value = _viewState.value?.copy(
-                webView = createdWebView,
-                webJsBridge = webJsBridge
+        val webJsBridge =
+            WebJSBridge(
+                createdWebView, deviceDetailInfo.value?.toJsonString() ?: "",
+                onScreenShotResult = ::handleScreenshotResult
             )
-        }
+
+        _viewState.value = _viewState.value?.copy(
+            webView = createdWebView,
+            webJsBridge = webJsBridge
+        )
     }
 
     private fun handleScreenshotResult(isSuccess: Boolean, base64Screenshot: String?) {
